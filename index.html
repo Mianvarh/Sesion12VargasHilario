@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hoja de ruta · CI-Pipeline</title>
+  <meta name="description" content="Recorrido por el primer pipeline de GitHub Actions de Miguel Angel Vargas Hilario, Sesión 12.">
+  <meta name="theme-color" content="#1f4a3e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+:root {
+  --enamel: #1f4a3e;
+  --enamel-deep: #12302a;
+  --enamel-lit: #2c6353;
+  --manila: #e3c580;
+  --manila-deep: #cfab62;
+  --rule: #6f5727;
+  --ink: #191d18;
+  --ink-soft: #46391c;
+  --paper: #f5ecd6;
+  --paper-soft: #cbd8c8;
+  --red: #a82314;
+  --red-lit: #c22c1b;
+  --yellow: #f2b632;
+  --steel: #b9b49f;
+
+  --display: "Big Shoulders Display", "Barlow Condensed", "Arial Narrow", sans-serif;
+  --label: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Barlow", "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --gutter: clamp(16px, 4vw, 64px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; -webkit-text-size-adjust: 100%; scrollbar-color: var(--manila-deep) var(--enamel-deep); }
+body {
+  margin: 0;
+  color: var(--paper);
+  background: var(--enamel) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iNjQwIiB2aWV3Qm94PSIwIDAgNjQwIDY0MCI+CiAgPGZpbHRlciBpZD0iaGFtbWVyIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgogICAgPGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuMDM4IiBudW1PY3RhdmVzPSIzIiBzZWVkPSIxMiIgc3RpdGNoVGlsZXM9InN0aXRjaCIgcmVzdWx0PSJub2lzZSIvPgogICAgPGZlRGlmZnVzZUxpZ2h0aW5nIGluPSJub2lzZSIgc3VyZmFjZVNjYWxlPSIzLjQiIGRpZmZ1c2VDb25zdGFudD0iMS4wMiIgbGlnaHRpbmctY29sb3I9IiMyZjY2NTUiPgogICAgICA8ZmVEaXN0YW50TGlnaHQgYXppbXV0aD0iMjM1IiBlbGV2YXRpb249IjU4Ii8+CiAgICA8L2ZlRGlmZnVzZUxpZ2h0aW5nPgogIDwvZmlsdGVyPgogIDxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iNjQwIiBmaWxsPSIjMWY0YTNlIi8+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSI2NDAiIGZpbHRlcj0idXJsKCNoYW1tZXIpIi8+Cjwvc3ZnPgo=") 0 0 / 640px;
+  font: 400 clamp(1.0625rem, 0.98rem + 0.3vw, 1.25rem) / 1.55 var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+::selection { background: var(--yellow); color: var(--ink); }
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--enamel-deep); }
+::-webkit-scrollbar-thumb { background: var(--manila-deep); border: 3px solid var(--enamel-deep); }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.card :focus-visible, .plate :focus-visible, .next :focus-visible { outline-color: var(--red); }
+
+h1, h2, h3, p, ol, ul, dl, dd, figure { margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+h1, h2, h3 { font-family: var(--display); font-weight: 900; line-height: 0.95; text-wrap: balance; text-transform: uppercase; letter-spacing: -0.01em; }
+h2 { font-size: clamp(3rem, 7vw, 6rem); }
+h3 { font-size: clamp(2.25rem, 3.6vw, 3.25rem); }
+code { font: 500 0.86em var(--mono); }
+a { color: inherit; text-underline-offset: 0.2em; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+.defs { position: absolute; }
+.wrap { width: min(100%, 1360px); margin-inline: auto; padding-inline: var(--gutter); }
+.lead { max-width: 56ch; margin-top: 20px; color: var(--paper-soft); }
+.skip { position: absolute; left: 16px; top: -80px; z-index: 10; padding: 10px 16px; background: var(--yellow); color: var(--ink); font-weight: 600; }
+.skip:focus { top: 16px; }
+
+/* Route card */
+.sheet { min-height: 100svh; display: grid; padding: clamp(10px, 1.6vw, 24px); }
+.card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  min-height: 100%;
+  padding: 0 clamp(16px, 3vw, 44px) clamp(16px, 2vw, 28px) clamp(16px, 5.4vw, 84px);
+  color: var(--ink);
+  background: var(--manila) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MjAiIGhlaWdodD0iNTIwIiB2aWV3Qm94PSIwIDAgNTIwIDUyMCI+CiAgPGZpbHRlciBpZD0iZmlicmUiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC4wOSAwLjIyIiBudW1PY3RhdmVzPSI0IiBzZWVkPSI3IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMC40MiAgMCAwIDAgMCAwLjMgIDAgMCAwIDAgMC4xICAwIDAgMCAwLjI2IC0wLjA4Ii8+CiAgPC9maWx0ZXI+CiAgPGZpbHRlciBpZD0ic3BlY2siIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44IiBudW1PY3RhdmVzPSIyIiBzZWVkPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMC4zICAwIDAgMCAwIDAuMiAgMCAwIDAgMCAwLjA2ICAwIDAgMCAxLjUgLTAuOTIiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjUyMCIgZmlsbD0iI2UzYzU4MCIvPgogIDxyZWN0IHdpZHRoPSI1MjAiIGhlaWdodD0iNTIwIiBmaWx0ZXI9InVybCgjZmlicmUpIi8+CiAgPHJlY3Qgd2lkdGg9IjUyMCIgaGVpZ2h0PSI1MjAiIGZpbHRlcj0idXJsKCNzcGVjaykiLz4KPC9zdmc+Cg==") 0 0 / 520px;
+  border-radius: 6px;
+  box-shadow: 0 2px 3px rgb(6 18 14 / 0.5), 0 34px 60px -24px rgb(6 18 14 / 0.75);
+  animation: card-in 700ms var(--ease-out) both;
+}
+.card::before, .card::after {
+  content: "";
+  position: absolute;
+  left: clamp(8px, 2vw, 30px);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--enamel-deep);
+  box-shadow: inset 0 3px 3px rgb(0 0 0 / 0.55), 0 1px 0 rgb(255 240 200 / 0.55);
+}
+.card::before { top: 22%; }
+.card::after { bottom: 22%; }
+@keyframes card-in { from { opacity: 0; transform: translateY(20px); } }
+
+.card__nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; border-bottom: 2px solid var(--ink); font-family: var(--label); font-weight: 600; font-size: 1.1875rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.card__nav ul { display: flex; gap: clamp(14px, 2.4vw, 36px); }
+.card__nav a { display: inline-block; padding-block: 10px; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 calc(100% - 7px) / 0 2px no-repeat; transition: background-size 200ms var(--ease-out); }
+.card__brand { font-family: var(--display); font-weight: 900; font-size: 1.625rem; letter-spacing: 0; }
+
+.card__head { position: relative; display: flex; align-items: center; padding-block: clamp(20px, 3vh, 44px); }
+h1 { max-width: 13.5em; font-size: clamp(3.25rem, min(8.6vw, 13.4vh), 6rem); }
+
+.fields { display: grid; grid-template-columns: 1fr 1fr 1fr 1.6fr; border-block: 2px solid var(--ink); }
+.fields > div { padding: 8px 14px 10px; border-left: 1px solid var(--rule); }
+.fields > div:first-child { border-left: 0; padding-left: 0; }
+.fields dt { font: 600 0.9375rem/1.2 var(--label); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); }
+.fields dd { font-weight: 600; font-size: 1.125rem; line-height: 1.3; }
+
+.control { display: flex; align-items: center; gap: clamp(14px, 2vw, 28px); padding-block: clamp(12px, 1.8vh, 20px); }
+.status { max-width: 62ch; color: var(--ink-soft); font-weight: 500; font-size: 1.0625rem; line-height: 1.3; font-variant-numeric: tabular-nums; }
+
+.launch {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-width: 268px;
+  min-height: 62px;
+  padding: 10px 26px;
+  border: 0;
+  border-radius: 4px;
+  color: #fff8ea;
+  background: var(--red);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 3px 0 #6d140a, 0 8px 14px -6px rgb(25 12 4 / 0.6);
+  font: 700 1.4375rem/1 var(--label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out), background-color 180ms ease;
+}
+.launch:active:not(:disabled) { transform: translateY(2px) scale(0.985); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 1px 0 #6d140a, 0 3px 6px -3px rgb(25 12 4 / 0.6); }
+.launch:disabled { cursor: progress; background: #7d3b2c; }
+.launch svg { transition: transform 200ms var(--ease-out); }
+.launch--small { min-width: 0; min-height: 52px; margin-top: 24px; font-size: 1.1875rem; }
+
+/* Stations on the card */
+.stations { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 2px solid var(--ink); padding-top: 44px; }
+.stations__rail { position: absolute; left: 14px; right: 0; top: 19px; }
+.stations__line { display: block; height: 6px; background: var(--ink); overflow: hidden; }
+.stations__fill { display: block; height: 100%; background: var(--red-lit); transform: scaleX(0); transform-origin: 0 50%; transition: transform 520ms var(--ease-in-out); }
+.st { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 18px 0 0; }
+.st__node { position: absolute; left: 4px; top: -35px; width: 20px; height: 20px; border-radius: 50%; background: var(--manila); border: 4px solid var(--ink); transition: background-color 180ms ease; }
+.st.is-done .st__node { background: var(--red-lit); }
+.st__text { min-width: 0; }
+.st__text strong { display: block; font: 800 1.75rem/1.05 var(--display); text-transform: uppercase; }
+.st__text code { display: block; margin-top: 3px; font-size: 0.8125rem; color: var(--ink-soft); overflow-wrap: anywhere; }
+.st__box { position: relative; flex: none; display: grid; place-items: center; width: 142px; height: 70px; border: 1.5px dashed var(--rule); }
+.st__hint { font: 600 0.875rem var(--label); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); transition: opacity 120ms ease; }
+.st.is-done .st__hint { opacity: 0; }
+
+.piece { position: absolute; left: 0; top: 0; z-index: 2; display: grid; place-items: center; width: 56px; height: 30px; color: var(--ink); background: var(--yellow); border: 2px solid var(--ink); border-radius: 3px; box-shadow: 0 3px 5px rgb(25 12 4 / 0.45); font: 700 0.9375rem/1 var(--label); text-transform: uppercase; will-change: transform; }
+
+/* Stamps */
+.stamp {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--red);
+  pointer-events: none;
+  opacity: 0;
+}
+.stamp.is-set { opacity: 1; }
+.stamp__ink {
+  display: block;
+  padding: 5px 8px 4px;
+  border: 3px solid currentColor;
+  border-radius: 4px;
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  font: 900 1.25rem/1 var(--display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transform: rotate(var(--tilt, -6deg));
+  filter: url(#ink);
+}
+.st__box .stamp__ink { padding: 6px 8px 5px; font-size: 1.4375rem; filter: url(#ink-fine); }
+.stamp--final { inset: auto 0 auto auto; top: 50%; margin-top: -8px; width: auto; }
+.stamp--final .stamp__ink { padding: 12px 18px 10px; border-width: 6px; font-size: clamp(2.25rem, 3.5vw, 3.25rem); text-align: center; --tilt: -9deg; }
+.stamp--final small { display: block; margin-top: 4px; font: 700 0.34em/1 var(--label); letter-spacing: 0.22em; }
+
+/* Route section */
+.route { padding-block: clamp(88px, 13vw, 176px) clamp(72px, 10vw, 136px); }
+.line { position: relative; margin-top: clamp(56px, 8vw, 104px); padding-left: clamp(44px, 7vw, 104px); display: grid; gap: clamp(64px, 10vw, 136px); }
+.line__belt { position: absolute; left: 8px; top: 0; bottom: 0; width: 14px; background: repeating-linear-gradient(0deg, var(--ink) 0 12px, #39423a 12px 16px); border-radius: 2px; }
+.line__fill { position: absolute; inset: 0; background: var(--yellow); transform: scaleY(var(--p, 0)); transform-origin: 50% 0; }
+.line__piece { position: absolute; left: -9px; top: 0; width: 32px; height: 22px; background: var(--yellow); border: 2px solid var(--ink); border-radius: 3px; transform: translateY(var(--y, 0)); will-change: transform; }
+.stop { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: center; gap: clamp(28px, 5vw, 80px); }
+.stop--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
+.stop--flip .plate { order: 2; }
+.stop__text p { margin-top: 16px; max-width: 42ch; color: var(--paper-soft); }
+.stop__text code { color: var(--yellow); }
+.plate { position: relative; background: var(--manila) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MjAiIGhlaWdodD0iNTIwIiB2aWV3Qm94PSIwIDAgNTIwIDUyMCI+CiAgPGZpbHRlciBpZD0iZmlicmUiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC4wOSAwLjIyIiBudW1PY3RhdmVzPSI0IiBzZWVkPSI3IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMC40MiAgMCAwIDAgMCAwLjMgIDAgMCAwIDAgMC4xICAwIDAgMCAwLjI2IC0wLjA4Ii8+CiAgPC9maWx0ZXI+CiAgPGZpbHRlciBpZD0ic3BlY2siIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44IiBudW1PY3RhdmVzPSIyIiBzZWVkPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMC4zICAwIDAgMCAwIDAuMiAgMCAwIDAgMCAwLjA2ICAwIDAgMCAxLjUgLTAuOTIiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjUyMCIgZmlsbD0iI2UzYzU4MCIvPgogIDxyZWN0IHdpZHRoPSI1MjAiIGhlaWdodD0iNTIwIiBmaWx0ZXI9InVybCgjZmlicmUpIi8+CiAgPHJlY3Qgd2lkdGg9IjUyMCIgaGVpZ2h0PSI1MjAiIGZpbHRlcj0idXJsKCNzcGVjaykiLz4KPC9zdmc+Cg==") 0 0 / 520px; border-radius: 4px; box-shadow: 0 2px 3px rgb(6 18 14 / 0.5), 0 28px 44px -24px rgb(6 18 14 / 0.8); overflow: hidden; }
+.plate svg { display: block; width: 100%; height: auto; }
+.stamp--plate { inset: auto 18px 16px auto; }
+.stamp--plate .stamp__ink { padding: 8px 14px 7px; border-width: 4px; font-size: clamp(1.5rem, 2.6vw, 2.25rem); --tilt: -7deg; }
+
+.d-line { fill: none; stroke: var(--ink); stroke-width: 4; }
+.d-thin { fill: none; stroke: var(--ink); stroke-width: 2; }
+.f-ink { fill: var(--ink); }
+.f-enamel { fill: var(--enamel); stroke: var(--ink); stroke-width: 3; }
+.f-lit { fill: var(--enamel-lit); stroke: var(--ink); stroke-width: 3; }
+.f-steel { fill: var(--steel); stroke: var(--ink); stroke-width: 3; }
+.f-red { fill: var(--red-lit); stroke: var(--ink); stroke-width: 3; }
+.f-yellow { fill: var(--yellow); stroke: var(--ink); stroke-width: 3; }
+.f-paper { fill: var(--paper); stroke: var(--ink); stroke-width: 3; }
+.s-ink { stroke: var(--ink); stroke-width: 3; }
+.t-plate { font: 900 34px var(--display); fill: var(--ink); }
+.t-note { font: 500 19px var(--mono); fill: var(--ink); }
+.t-screen { font: 500 14px var(--mono); fill: var(--yellow); }
+.t-strip { font: 500 13px var(--mono); fill: var(--ink); }
+.ticks { fill: none; stroke: var(--ink); stroke-width: 9; stroke-dasharray: 2 13.08; }
+.needle { fill: none; stroke: var(--red); stroke-width: 5; stroke-linecap: square; transform-origin: 382px 190px; transform: rotate(-58deg); transition: transform 900ms var(--ease-out); }
+.pulse { fill: none; stroke: var(--yellow); stroke-width: 4; stroke-dasharray: 10 22; opacity: 0; }
+.cap { transition: transform 200ms var(--ease-out); }
+.stop.is-active .cap { transform: translateY(10px); }
+.stop.is-active .pulse { opacity: 1; animation: pulse 1.2s linear infinite; }
+.stop.is-active .needle { transform: rotate(34deg); }
+.stop.is-active .roller { animation: spin 3.2s linear infinite; }
+.stop.is-active .roller--rev { animation-direction: reverse; }
+@keyframes pulse { to { stroke-dashoffset: -32; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* File section */
+.file { padding-block: clamp(72px, 10vw, 136px); background: var(--enamel-deep); }
+.file__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(36px, 6vw, 96px); align-items: start; }
+.file__side { position: sticky; top: 32px; }
+.file h2 { font-size: clamp(3rem, 5.6vw, 5rem); }
+.note { margin-top: 36px; padding-top: 16px; border-top: 2px solid var(--yellow); min-height: 170px; }
+.note h3 { color: var(--yellow); font-size: 2.25rem; }
+.note p { margin-top: 10px; max-width: 42ch; }
+.note.is-swapping > * { animation: note-in 220ms var(--ease-out); }
+@keyframes note-in { from { opacity: 0; filter: blur(3px); transform: translateY(4px); } }
+
+.yaml { min-width: 0; background: #0d211d; border: 1px solid #36574c; border-radius: 6px; box-shadow: 0 24px 40px -24px rgb(0 0 0 / 0.8); }
+.yaml__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; border-bottom: 1px solid #36574c; color: var(--paper-soft); font: 500 0.8125rem var(--mono); overflow-wrap: anywhere; }
+.copy { flex: none; min-width: 84px; min-height: 40px; padding: 4px 12px; border: 1px solid var(--paper-soft); border-radius: 4px; background: transparent; font: 600 1rem var(--label); text-transform: uppercase; letter-spacing: 0.05em; color: var(--paper); transition: transform 140ms var(--ease-out), background-color 160ms ease, color 160ms ease; }
+.copy:active { transform: scale(0.97); }
+.yaml__body { padding: 14px 8px 18px; overflow-x: auto; counter-reset: ln; font: 400 clamp(0.8125rem, 0.75rem + 0.25vw, 0.9375rem)/1.75 var(--mono); }
+.ln { display: block; min-height: 1.75em; padding-right: 16px; white-space: pre; counter-increment: ln; color: var(--paper); }
+.ln::before { content: counter(ln); display: inline-block; width: 2.6em; padding-right: 1em; text-align: right; color: #86a093; font-variant-numeric: tabular-nums; }
+.ln i { font-style: normal; color: var(--yellow); }
+.yb { display: block; width: max-content; min-width: 100%; padding: 0; border: 0; border-radius: 3px; background: transparent; font: inherit; text-align: left; transition: background-color 160ms ease, box-shadow 160ms ease; }
+.yb.is-on { background: #1f4a3e; box-shadow: inset 3px 0 0 var(--yellow); }
+
+/* Pending */
+.next { padding-block: clamp(72px, 10vw, 136px); color: var(--ink); background: var(--manila) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MjAiIGhlaWdodD0iNTIwIiB2aWV3Qm94PSIwIDAgNTIwIDUyMCI+CiAgPGZpbHRlciBpZD0iZmlicmUiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC4wOSAwLjIyIiBudW1PY3RhdmVzPSI0IiBzZWVkPSI3IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMC40MiAgMCAwIDAgMCAwLjMgIDAgMCAwIDAgMC4xICAwIDAgMCAwLjI2IC0wLjA4Ii8+CiAgPC9maWx0ZXI+CiAgPGZpbHRlciBpZD0ic3BlY2siIHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44IiBudW1PY3RhdmVzPSIyIiBzZWVkPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMC4zICAwIDAgMCAwIDAuMiAgMCAwIDAgMCAwLjA2ICAwIDAgMCAxLjUgLTAuOTIiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjUyMCIgZmlsbD0iI2UzYzU4MCIvPgogIDxyZWN0IHdpZHRoPSI1MjAiIGhlaWdodD0iNTIwIiBmaWx0ZXI9InVybCgjZmlicmUpIi8+CiAgPHJlY3Qgd2lkdGg9IjUyMCIgaGVpZ2h0PSI1MjAiIGZpbHRlcj0idXJsKCNzcGVjaykiLz4KPC9zdmc+Cg==") 0 0 / 520px; }
+.todo { margin-top: clamp(32px, 5vw, 64px); border-top: 3px solid var(--ink); }
+.todo .pending { justify-self: end; }
+.todo li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 124px; gap: clamp(16px, 4vw, 56px); align-items: center; padding-block: clamp(20px, 2.6vw, 32px); border-bottom: 1px solid var(--rule); }
+.todo p { max-width: 54ch; color: var(--ink-soft); }
+.pending { padding: 6px 12px 5px; border: 2px dashed var(--ink-soft); border-radius: 3px; color: var(--ink-soft); font: 700 1.0625rem/1 var(--label); text-transform: uppercase; letter-spacing: 0.08em; transform: rotate(-3deg); }
+
+.pending--done { border: 3px solid var(--red); color: var(--red); }
+
+/* End */
+.end { padding-block: clamp(72px, 10vw, 136px) 32px; }
+.end__grid { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 40px; }
+.end__big { font: 900 clamp(5rem, 15vw, 13rem)/0.85 var(--display); text-transform: uppercase; color: var(--manila); }
+.end__label { font: 600 1rem var(--label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--paper-soft); }
+.end__name { margin-top: 4px; padding-bottom: 8px; border-bottom: 2px solid var(--manila); font: 800 clamp(1.75rem, 3vw, 2.5rem)/1.05 var(--display); text-transform: uppercase; }
+.end__meta { margin-top: 8px; color: var(--paper-soft); }
+.end__foot { margin-top: clamp(48px, 7vw, 88px); font-size: 0.9375rem; color: var(--paper-soft); }
+
+@media (hover: hover) and (pointer: fine) {
+  .card__nav li a:hover { background-size: 100% 2px; }
+  .launch:hover:not(:disabled) { background: var(--red-lit); }
+  .launch:hover:not(:disabled) svg { transform: translateX(4px); }
+  .yb:hover:not(.is-on) { background: #173a32; }
+  .copy:hover { background: var(--paper); color: var(--ink); }
+}
+
+@media (max-width: 1080px) {
+  .st { flex-direction: column; align-items: flex-start; }
+  .fields { grid-template-columns: 1fr 1fr; }
+  .fields > div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .fields > div:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+}
+
+@media (max-width: 760px) {
+  .card { grid-template-rows: auto; padding-left: 16px; padding-right: 16px; }
+  .card::before, .card::after { display: none; }
+  .card__nav ul { gap: 10px; }
+  .card__brand { font-size: 1.25rem; white-space: nowrap; }
+  .card__nav { font-size: 1rem; letter-spacing: 0; }
+  h1 { font-size: clamp(3.25rem, 16vw, 4.5rem); }
+  .stamp--final { right: -4px; top: 24px; margin-top: 0; }
+  .stamp--final .stamp__ink { font-size: 1.25rem; border-width: 3px; padding: 6px 8px 5px; letter-spacing: 0; filter: url(#ink-fine); }
+  .stamp--plate { inset: auto 8px 8px auto; }
+  .stamp--plate .stamp__ink { font-size: 1.125rem; border-width: 3px; padding: 5px 8px 4px; filter: url(#ink-fine); }
+  .control { flex-direction: column; align-items: stretch; }
+  .launch { width: 100%; }
+  .launch--small { width: auto; }
+  .stations { grid-template-columns: 1fr; padding-top: 16px; padding-left: 44px; }
+  .stations__rail { left: 11px; right: auto; top: 28px; bottom: 44px; width: 6px; }
+  .stations__line { width: 6px; height: 100%; }
+  .stations__fill { transform: scaleY(0); transform-origin: 50% 0; }
+  .st { flex-direction: row; align-items: center; padding: 8px 0 14px; }
+  .st__node { left: -41px; top: 12px; }
+  .st__text strong { font-size: 1.625rem; }
+  .st__box { width: 118px; height: 60px; }
+  .st__box .stamp__ink { font-size: 1.1875rem; }
+  .piece { width: 46px; height: 26px; font-size: 0.8125rem; }
+  .stop, .stop--flip { grid-template-columns: minmax(0, 1fr); }
+  .stop--flip .plate { order: 0; }
+  .file__grid { grid-template-columns: minmax(0, 1fr); }
+  .file__side { position: static; }
+  .note { min-height: 150px; }
+  .todo li { grid-template-columns: minmax(0, 1fr); gap: 10px; justify-items: start; }
+  .todo .pending { justify-self: start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .card { animation: none; }
+  .stations__fill, .needle, .cap { transition-duration: 1ms; }
+  .stop.is-active .pulse, .stop.is-active .roller { animation: none; }
+  .note.is-swapping > * { animation: note-fade 160ms ease; }
+  @keyframes note-fade { from { opacity: 0; } }
+}
+</style>
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="grain"/>
+      <feDisplacementMap in="SourceGraphic" in2="grain" scale="2.4" result="rough"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.16" numOctaves="2" seed="9"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 2.05"/>
+      <feComposite in="rough" operator="in"/>
+    </filter>
+    <filter id="ink-fine" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="1" seed="4" result="grain"/>
+      <feDisplacementMap in="SourceGraphic" in2="grain" scale="0.9"/>
+    </filter>
+  </svg>
+
+  <a class="skip" href="#recorrido">Saltar al recorrido</a>
+
+  <header class="sheet">
+    <div class="card" id="card">
+      <nav class="card__nav" aria-label="Secciones">
+        <a class="card__brand" href="#card">Hoja de ruta</a>
+        <ul>
+          <li><a href="#recorrido">Recorrido</a></li>
+          <li><a href="#archivo">Archivo</a></li>
+          <li><a href="#estado">Estado</a></li>
+        </ul>
+      </nav>
+
+      <div class="card__head">
+        <h1>Un push a main, sellado en cada estación.</h1>
+        <span class="stamp stamp--final" id="finalStamp" aria-hidden="true">
+          <span class="stamp__ink">Ruta completa<small>Simulación</small></span>
+        </span>
+      </div>
+
+      <dl class="fields">
+        <div><dt>Pieza</dt><dd>Push a main</dd></div>
+        <div><dt>Orden de trabajo</dt><dd>CI-Pipeline</dd></div>
+        <div><dt>Máquina</dt><dd>ubuntu-latest</dd></div>
+        <div><dt>Operario</dt><dd>Miguel Angel Vargas Hilario</dd></div>
+      </dl>
+
+      <div class="control">
+        <button class="launch" id="launch" type="button">
+          <span class="launch__label" id="launchLabel">Lanzar push a main</span>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
+        </button>
+        <p class="status" id="status" role="status">Lista para lanzar. Es una simulación y no ejecuta GitHub Actions.</p>
+      </div>
+
+      <ol class="stations" id="stations">
+        <li class="stations__rail" aria-hidden="true"><span class="stations__line"><span class="stations__fill" id="railFill"></span></span></li>
+        <li class="st">
+          <span class="st__node"></span>
+          <div class="st__text">
+            <strong>1. Disparo</strong>
+            <code>on: push → main</code>
+          </div>
+          <div class="st__box"><span class="st__hint">Sello</span><span class="stamp" aria-hidden="true"><span class="stamp__ink">Recibido</span></span></div>
+        </li>
+        <li class="st">
+          <span class="st__node"></span>
+          <div class="st__text">
+            <strong>2. Clonado</strong>
+            <code>actions/checkout@v4</code>
+          </div>
+          <div class="st__box"><span class="st__hint">Sello</span><span class="stamp" aria-hidden="true"><span class="stamp__ink">Clonado</span></span></div>
+        </li>
+        <li class="st">
+          <span class="st__node"></span>
+          <div class="st__text">
+            <strong>3. Verificación</strong>
+            <code>test -f · test -s</code>
+          </div>
+          <div class="st__box"><span class="st__hint">Sello</span><span class="stamp" aria-hidden="true"><span class="stamp__ink">Verificado</span></span></div>
+        </li>
+        <li class="piece" id="piece" aria-hidden="true"><span>push</span></li>
+      </ol>
+    </div>
+  </header>
+
+  <main>
+    <section class="route" id="recorrido" aria-labelledby="route-title">
+      <div class="wrap">
+        <h2 id="route-title">Tres estaciones, una sola dirección.</h2>
+        <p class="lead">El trabajo avanza en orden. Cada estación recibe lo que dejó la anterior y prepara lo que necesita la siguiente.</p>
+
+        <div class="line" id="line">
+          <div class="line__belt" aria-hidden="true"><span class="line__fill" id="lineFill"></span><span class="line__piece" id="linePiece"></span></div>
+
+          <article class="stop">
+            <figure class="plate">
+              <svg viewBox="0 0 640 420" role="img" aria-label="Dibujo técnico de un pedestal con un botón rojo y una placa que dice main.">
+                <defs><pattern id="g1" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#7d6430" stroke-opacity=".28"/></pattern></defs>
+                <rect width="640" height="420" fill="url(#g1)"/>
+                <path d="M40 374H600" class="d-line"/>
+                <path d="M40 374l14 16M84 374l14 16M128 374l14 16M172 374l14 16M216 374l14 16M260 374l14 16M304 374l14 16M348 374l14 16M392 374l14 16M436 374l14 16M480 374l14 16M524 374l14 16M568 374l14 16" class="d-thin"/>
+                <rect x="218" y="352" width="204" height="22" class="f-ink"/>
+                <rect x="252" y="222" width="136" height="130" class="f-enamel"/>
+                <rect x="208" y="160" width="224" height="66" rx="6" class="f-lit"/>
+                <circle cx="240" cy="193" r="10" class="f-yellow lamp"/>
+                <circle cx="400" cy="193" r="10" class="f-paper"/>
+                <g class="cap">
+                  <rect x="298" y="124" width="44" height="38" class="f-steel"/>
+                  <path d="M266 126c6-40 102-40 108 0z" class="f-red"/>
+                </g>
+                <rect x="272" y="252" width="96" height="46" class="f-paper"/>
+                <text x="320" y="286" text-anchor="middle" class="t-plate">MAIN</text>
+                <path d="M388 318H520V250" class="d-line"/>
+                <path d="M388 318H520V250" class="pulse"/>
+                <path d="M506 264l14-18 14 18" class="d-line"/>
+                <path d="M266 108L150 76H64" class="d-thin"/>
+                <text x="64" y="66" class="t-note">on: push</text>
+                <path d="M272 275H150L120 306H64" class="d-thin"/>
+                <text x="64" y="328" class="t-note">branches: main</text>
+                <text x="548" y="238" class="t-note" text-anchor="middle">a estación 2</text>
+              </svg>
+              <span class="stamp stamp--plate" aria-hidden="true"><span class="stamp__ink">Recibido</span></span>
+            </figure>
+            <div class="stop__text">
+              <h3>Disparo</h3>
+              <p>El flujo espera un evento concreto: un push a la rama <code>main</code>. Un cambio en cualquier otra rama no lo activa.</p>
+            </div>
+          </article>
+
+          <article class="stop stop--flip">
+            <figure class="plate">
+              <svg viewBox="0 0 640 420" role="img" aria-label="Dibujo técnico de una prensa de rodillos que copia el repositorio hacia una máquina ubuntu-latest.">
+                <defs><pattern id="g2" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#7d6430" stroke-opacity=".28"/></pattern></defs>
+                <rect width="640" height="420" fill="url(#g2)"/>
+                <path d="M30 356H610" class="d-line"/>
+                <path d="M54 170h46l16 20h74v124H54z" class="f-yellow s-ink"/>
+                <path d="M78 232h88M78 258h88M78 284h56" class="d-thin"/>
+                <text x="122" y="150" text-anchor="middle" class="t-note">repositorio</text>
+                <rect x="66" y="314" width="112" height="42" class="f-ink"/>
+                <rect x="256" y="96" width="24" height="260" class="f-enamel"/>
+                <rect x="360" y="96" width="24" height="260" class="f-enamel"/>
+                <rect x="240" y="72" width="160" height="30" class="f-lit"/>
+                <rect x="190" y="238" width="260" height="10" class="f-paper s-ink"/>
+                <g class="roller" style="transform-origin:320px 190px"><circle cx="320" cy="190" r="48" class="f-steel"/><path d="M320 142v96M272 190h96M286 156l68 68M354 156l-68 68" class="d-thin"/><circle cx="320" cy="190" r="10" class="f-ink"/></g>
+                <g class="roller roller--rev" style="transform-origin:320px 296px"><circle cx="320" cy="296" r="48" class="f-steel"/><path d="M320 248v96M272 296h96M286 262l68 68M354 262l-68 68" class="d-thin"/><circle cx="320" cy="296" r="10" class="f-ink"/></g>
+                <rect x="452" y="118" width="150" height="238" class="f-enamel"/>
+                <rect x="468" y="134" width="118" height="26" class="f-ink"/>
+                <text x="527" y="153" text-anchor="middle" class="t-screen">ubuntu-latest</text>
+                <path d="M476 192h34l12 15h56v92h-102z" class="f-yellow s-ink"/>
+                <path d="M492 238h68M492 258h68M492 278h42" class="d-thin"/>
+                <path d="M320 58V30H210" class="d-thin"/>
+                <text x="60" y="36" class="t-note">actions/checkout@v4</text>
+              </svg>
+              <span class="stamp stamp--plate" aria-hidden="true"><span class="stamp__ink">Clonado</span></span>
+            </figure>
+            <div class="stop__text">
+              <h3>Clonado</h3>
+              <p>La máquina <code>ubuntu-latest</code> empieza sin tu proyecto. La acción <code>checkout</code> descarga el repositorio para que el trabajo tenga los archivos.</p>
+            </div>
+          </article>
+
+          <article class="stop">
+            <figure class="plate">
+              <svg viewBox="0 0 640 420" role="img" aria-label="Dibujo técnico de un banco de inspección con un reloj comparador sobre un documento y una tira impresa.">
+                <defs><pattern id="g3" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#7d6430" stroke-opacity=".28"/></pattern></defs>
+                <rect width="640" height="420" fill="url(#g3)"/>
+                <rect x="40" y="316" width="560" height="26" class="f-lit"/>
+                <rect x="76" y="342" width="30" height="50" class="f-ink"/>
+                <rect x="534" y="342" width="30" height="50" class="f-ink"/>
+                <rect x="508" y="70" width="26" height="246" class="f-enamel"/>
+                <rect x="330" y="84" width="204" height="20" class="f-steel s-ink"/>
+                <rect x="376" y="104" width="12" height="28" class="f-ink"/>
+                <circle cx="382" cy="190" r="62" class="f-paper s-ink"/>
+                <circle cx="382" cy="190" r="48" class="ticks"/>
+                <path d="M382 190V146" class="needle"/>
+                <circle cx="382" cy="190" r="7" class="f-red s-ink"/>
+                <rect x="376" y="252" width="12" height="34" class="f-steel s-ink"/>
+                <path d="M326 286h96l22 30H304z" class="f-yellow s-ink"/>
+                <rect x="66" y="238" width="136" height="78" class="f-enamel"/>
+                <rect x="84" y="228" width="100" height="12" class="f-ink"/>
+                <path d="M96 228V92h76v136z" class="f-paper s-ink"/>
+                <text transform="translate(139 218) rotate(-90)" class="t-strip">Verificando archivos...</text>
+                <path d="M172 112L204 62h20" class="d-thin"/>
+                <text x="230" y="58" class="t-note" text-anchor="start">test -f · test -s</text>
+              </svg>
+              <span class="stamp stamp--plate" aria-hidden="true"><span class="stamp__ink">Verificado</span></span>
+            </figure>
+            <div class="stop__text">
+              <h3>Verificación</h3>
+              <p><code>test -f</code> comprueba que <code>index.html</code> exista y <code>test -s</code> que no esté vacío. Si una de las dos falla, el trabajo se detiene.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="file" id="archivo" aria-labelledby="file-title">
+      <div class="wrap file__grid">
+        <div class="file__side">
+          <h2 id="file-title">El archivo completo, sin recortes.</h2>
+          <p class="lead">Estas 20 líneas son todo el pipeline. Elige un bloque para ver qué controla.</p>
+          <div class="note" id="note" aria-live="polite">
+            <h3 id="noteTitle">Disparo</h3>
+            <p id="noteText">Se activa únicamente con un push a la rama main.</p>
+          </div>
+        </div>
+
+        <div class="yaml">
+          <div class="yaml__bar">
+            <span>.github/workflows/ci-pipeline.yml</span>
+            <button class="copy" id="copy" type="button">Copiar</button>
+          </div>
+          <div class="yaml__body" id="yaml">
+            <button class="yb" type="button" data-title="Nombre del flujo" data-text="CI-Pipeline es el nombre que GitHub muestra en la pestaña Actions."><span class="ln"><i>name</i>: CI-Pipeline</span></button>
+            <span class="ln ln--blank"></span>
+            <button class="yb is-on" type="button" aria-pressed="true" data-title="Disparo" data-text="Se activa únicamente con un push a la rama main."><span class="ln"><i>on</i>:</span><span class="ln">  <i>push</i>:</span><span class="ln">    <i>branches</i>: ["main"]</span></button>
+            <span class="ln ln--blank"></span>
+            <button class="yb" type="button" data-title="Trabajo y máquina" data-text="El trabajo verificar-proyecto corre en una máquina ubuntu-latest que GitHub prepara para cada ejecución."><span class="ln"><i>jobs</i>:</span><span class="ln">  <i>verificar-proyecto</i>:</span><span class="ln">    <i>runs-on</i>: ubuntu-latest</span><span class="ln ln--blank"></span><span class="ln">    <i>steps</i>:</span></button>
+            <button class="yb" type="button" data-title="Clonado" data-text="uses reutiliza la acción oficial checkout, en su versión 4, para traer el código del repositorio."><span class="ln">      - <i>name</i>: Clonar repositorio</span><span class="ln">        <i>uses</i>: actions/checkout@v4</span></button>
+            <span class="ln ln--blank"></span>
+            <button class="yb" type="button" data-title="Verificación" data-text="test -f comprueba que index.html exista y test -s que no esté vacío. Si un comando falla, el trabajo se detiene."><span class="ln">      - <i>name</i>: Verificar archivos del proyecto</span><span class="ln">        <i>run</i>: |</span><span class="ln">          echo "Verificando archivos..."</span><span class="ln">          test -f .github/workflows/index.html</span><span class="ln">          test -s .github/workflows/index.html</span><span class="ln">          echo "Verificación completada correctamente"</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="next" id="estado" aria-labelledby="next-title">
+      <div class="wrap">
+        <h2 id="next-title">Ruta completada.</h2>
+        <ol class="todo">
+          <li>
+            <h3>Escribir el flujo</h3>
+            <p>El archivo <code>ci-pipeline.yml</code> define el disparo, la máquina y los pasos del trabajo.</p>
+            <span class="pending pending--done">Hecho</span>
+          </li>
+          <li>
+            <h3>Publicar en GitHub</h3>
+            <p>El repositorio está en GitHub y cada push a <code>main</code> activa el flujo en GitHub Actions.</p>
+            <span class="pending pending--done">Hecho</span>
+          </li>
+          <li>
+            <h3>Verificar de verdad</h3>
+            <p>El paso final comprueba que <code>index.html</code> exista y tenga contenido.</p>
+            <span class="pending pending--done">Hecho</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="end">
+    <div class="wrap end__grid">
+      <p class="end__big">Fin de ruta.</p>
+      <div class="end__sign">
+        <p class="end__label">Firma del operario</p>
+        <p class="end__name">Miguel Angel Vargas Hilario</p>
+        <p class="end__meta">Sesión 12 · Prueba CI/CD Cloud</p>
+        <button class="launch launch--small" id="again" type="button">Volver a lanzar</button>
+      </div>
+    </div>
+    <p class="wrap end__foot">El recorrido de esta página es una simulación. Ilustraciones y texturas generadas con código para este proyecto.</p>
+  </footer>
+
+  <script>
+(() => {
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  const stacked = matchMedia('(max-width: 760px)');
+  const EASE_MOVE = 'cubic-bezier(0.77, 0, 0.175, 1)';
+  const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
+
+  const card = $('#card');
+  const stationsEl = $('#stations');
+  const stations = $$('.st', stationsEl);
+  const piece = $('#piece');
+  const fill = $('#railFill');
+  const launch = $('#launch');
+  const label = $('#launchLabel');
+  const status = $('#status');
+  const finalStamp = $('#finalStamp');
+
+  const LOGS = [
+    'Disparo: se detectó un push a main.',
+    'Clonado: actions/checkout@v4 descarga el repositorio.',
+    'Verificación: test -f y test -s revisan index.html.',
+  ];
+  const TILTS = ['-7deg', '4deg', '-3deg'];
+
+  let running = false;
+  let current = 0;
+
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, calm.matches ? Math.min(ms, 260) : ms));
+
+  function pointFor(index) {
+    const node = $('.st__node', stations[index]).getBoundingClientRect();
+    const box = stationsEl.getBoundingClientRect();
+    return {
+      x: node.left - box.left + node.width / 2 - piece.offsetWidth / 2,
+      y: node.top - box.top + node.height / 2 - piece.offsetHeight / 2,
+    };
+  }
+
+  function fillFor(index) {
+    const line = $('.stations__line').getBoundingClientRect();
+    const node = $('.st__node', stations[index]).getBoundingClientRect();
+    return stacked.matches
+      ? Math.max(0, (node.top + node.height / 2 - line.top) / line.height)
+      : Math.max(0, (node.left + node.width / 2 - line.left) / line.width);
+  }
+
+  function setFill(value) {
+    fill.style.transform = stacked.matches ? `scaleY(${value})` : `scaleX(${value})`;
+  }
+
+  function place(index) {
+    const { x, y } = pointFor(index);
+    piece.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  async function travel(from, to) {
+    const a = pointFor(from);
+    const b = pointFor(to);
+    const end = `translate(${b.x}px, ${b.y}px)`;
+    if (!calm.matches) {
+      await piece.animate(
+        [{ transform: `translate(${a.x}px, ${a.y}px)` }, { transform: end }],
+        { duration: 540, easing: EASE_MOVE },
+      ).finished;
+    }
+    piece.style.transform = end;
+  }
+
+  async function strike(stamp, tilt) {
+    const ink = $('.stamp__ink', stamp);
+    if (tilt) ink.style.setProperty('--tilt', tilt);
+    stamp.classList.add('is-set');
+    if (calm.matches) {
+      await stamp.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: 'ease' }).finished;
+      return;
+    }
+    await stamp.animate(
+      [
+        { opacity: 0, transform: 'scale(1.55)', filter: 'blur(3px)' },
+        { opacity: 1, transform: 'scale(1)', filter: 'blur(0)' },
+      ],
+      { duration: 170, easing: 'cubic-bezier(0.55, 0, 1, 0.45)' },
+    ).finished;
+    card.animate(
+      [{ transform: 'translateY(0)' }, { transform: 'translateY(3px)' }, { transform: 'translateY(0)' }],
+      { duration: 170, easing: EASE_OUT },
+    );
+  }
+
+  function clearCard() {
+    [...$$('.stamp', stationsEl), finalStamp].forEach((stamp) => {
+      if (!stamp.classList.contains('is-set')) return;
+      stamp.classList.remove('is-set');
+      if (!calm.matches) stamp.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 130, easing: 'ease-out' });
+    });
+    stations.forEach((station) => station.classList.remove('is-done'));
+    setFill(0);
+  }
+
+  async function run() {
+    if (running) return;
+    running = true;
+    launch.disabled = true;
+    launch.setAttribute('aria-busy', 'true');
+    label.textContent = 'En recorrido';
+    clearCard();
+    await travel(current, 0);
+    current = 0;
+    await wait(180);
+
+    for (let i = 0; i < stations.length; i += 1) {
+      if (i > 0) {
+        setFill(fillFor(i));
+        await travel(i - 1, i);
+        current = i;
+      }
+      status.textContent = LOGS[i];
+      await wait(300);
+      await strike($('.stamp', stations[i]), TILTS[i]);
+      stations[i].classList.add('is-done');
+      await wait(260);
+    }
+
+    setFill(1);
+    await wait(260);
+    await strike(finalStamp);
+    status.textContent = 'Ruta completa en esta simulación. Esta página no ejecuta GitHub Actions.';
+    label.textContent = 'Lanzar otra vez';
+    launch.disabled = false;
+    launch.removeAttribute('aria-busy');
+    running = false;
+  }
+
+  launch.addEventListener('click', run);
+  $('#again').addEventListener('click', () => {
+    scrollTo({ top: 0, behavior: calm.matches ? 'auto' : 'smooth' });
+    setTimeout(() => { launch.focus({ preventScroll: true }); run(); }, calm.matches ? 0 : 700);
+  });
+
+  const reflow = () => {
+    place(current);
+    if ($('.st.is-done', stationsEl)) setFill(finalStamp.classList.contains('is-set') ? 1 : fillFor(current));
+  };
+  addEventListener('resize', reflow);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reflow);
+  place(0);
+
+  /* Stations leave a permanent stamp as they enter the reading area. */
+  const stops = $$('.stop');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle('is-active', entry.isIntersecting);
+        const stamp = $('.stamp', entry.target);
+        if (entry.isIntersecting && !stamp.classList.contains('is-set')) setTimeout(() => strikePlate(stamp), 260);
+      });
+    }, { threshold: 0.55 });
+    stops.forEach((stop) => observer.observe(stop));
+  } else {
+    stops.forEach((stop) => $('.stamp', stop).classList.add('is-set'));
+  }
+
+  function strikePlate(stamp) {
+    stamp.classList.add('is-set');
+    if (calm.matches) {
+      stamp.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: 'ease' });
+      return;
+    }
+    stamp.animate(
+      [
+        { opacity: 0, transform: 'scale(1.5)', filter: 'blur(3px)' },
+        { opacity: 1, transform: 'scale(1)', filter: 'blur(0)' },
+      ],
+      { duration: 170, easing: 'cubic-bezier(0.55, 0, 1, 0.45)' },
+    );
+  }
+
+  /* The workpiece follows the reader along the belt. */
+  const line = $('#line');
+  const lineFill = $('#lineFill');
+  const linePiece = $('#linePiece');
+  let ticking = false;
+  function updateBelt() {
+    ticking = false;
+    const rect = line.getBoundingClientRect();
+    const progress = Math.min(1, Math.max(0, (innerHeight * 0.6 - rect.top) / rect.height));
+    lineFill.style.setProperty('--p', progress.toFixed(4));
+    linePiece.style.setProperty('--y', `${(progress * (rect.height - 22)).toFixed(1)}px`);
+  }
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(updateBelt); }
+  }, { passive: true });
+  addEventListener('resize', updateBelt);
+  updateBelt();
+
+  /* YAML explorer */
+  const blocks = $$('.yb');
+  const note = $('#note');
+  const noteTitle = $('#noteTitle');
+  const noteText = $('#noteText');
+  function select(block) {
+    if (block.classList.contains('is-on')) return;
+    blocks.forEach((item) => {
+      const on = item === block;
+      item.classList.toggle('is-on', on);
+      item.setAttribute('aria-pressed', String(on));
+    });
+    noteTitle.textContent = block.dataset.title;
+    noteText.textContent = block.dataset.text;
+    note.classList.remove('is-swapping');
+    void note.offsetWidth;
+    note.classList.add('is-swapping');
+  }
+  blocks.forEach((block) => {
+    if (!block.hasAttribute('aria-pressed')) block.setAttribute('aria-pressed', 'false');
+    block.addEventListener('click', () => select(block));
+    block.addEventListener('focus', () => select(block));
+    if (matchMedia('(hover: hover)').matches) block.addEventListener('pointerenter', () => select(block));
+  });
+
+  /* Copy */
+  const copy = $('#copy');
+  let copyTimer;
+  copy.addEventListener('click', async () => {
+    const text = $$('.ln', $('#yaml')).map((ln) => ln.textContent).join('\n') + '\n';
+    let message = 'Copiado';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      message = 'Sin permiso';
+    }
+    copy.textContent = message;
+    clearTimeout(copyTimer);
+    copyTimer = setTimeout(() => { copy.textContent = 'Copiar'; }, 1600);
+  });
+})();
+</script>
+</body>
+</html>
